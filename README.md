@@ -1,5 +1,6 @@
 # Mini-Ids
 구조: Capture -> Parse -> State -> Detect -> Alert 
+
 탐지 항목: Port Scan, ARP Spoofing, 특정 패킷(DNS/ICMP/HTTP/SSH)
 
 ```
