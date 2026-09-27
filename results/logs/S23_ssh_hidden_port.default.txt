@@ -1,0 +1,5 @@
+$ python3 ids.py -r scenarios/S23_ssh_hidden_port.pcap
+[23:13:25] [ALERT] LOW    SSH_NONSTANDARD_PORT       192.168.10.2:49101 → 203.0.113.200:4444 비표준 포트 SSH 배너 'SSH-2.0-OpenSSH_8.9'
+[23:13:25] [ALERT] LOW    SSH_NONSTANDARD_PORT       203.0.113.200:4444 → 192.168.10.2:49101 비표준 포트 SSH 배너 'SSH-2.0-dropbear_2022.83'
+
+[*] 패킷 79개 / 19.89초 분석, 경고 2건 {'SSH_NONSTANDARD_PORT': 2}

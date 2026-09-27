@@ -1,0 +1,7 @@
+$ python3 ids.py -r scenarios/S17_http_attacks.pcap -c config.json
+[23:13:25] [ALERT] HIGH   HTTP_ATTACK_PATTERN        192.168.10.3 → 192.168.10.20:80 SQL_INJECTION 패턴 'union select' : GET /item.php?id=1%27%20UNION%20SELECT%20user,password%20FROM%20users-- HTTP/1.1
+[23:13:25] [ALERT] MEDIUM HTTP_SCANNER_UA            192.168.10.3 자동화 공격 도구 User-Agent: sqlmap/1.8#stable (https://sqlmap.org)
+[23:13:28] [ALERT] HIGH   HTTP_ATTACK_PATTERN        192.168.10.3 → 192.168.10.20:80 PATH_TRAVERSAL 패턴 '../' : GET /download?file=../../../../etc/passwd HTTP/1.1
+[23:13:31] [ALERT] HIGH   HTTP_ATTACK_PATTERN        192.168.10.3 → 192.168.10.20:80 XSS 패턴 '<script' : GET /search?q=%3Cscript%3Ealert(1)%3C/script%3E HTTP/1.1
+
+[*] 패킷 194개 / 29.17초 분석, 경고 4건 {'HTTP_ATTACK_PATTERN': 3, 'HTTP_SCANNER_UA': 1}

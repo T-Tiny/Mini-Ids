@@ -1,0 +1,270 @@
+[
+  {
+    "name": "S01_normal_office",
+    "label": "benign",
+    "expected_rules": [],
+    "description": "정상 사무실 트래픽 90초 (DNS 응답의 임의 목적지 포트, HTTPS 다중 연결 포함)",
+    "design_note": "",
+    "packets": 704,
+    "pcap": "S01_normal_office.pcap"
+  },
+  {
+    "name": "S02_syn_scan",
+    "label": "attack",
+    "expected_rules": [
+      "PORT_SCAN_VERTICAL"
+    ],
+    "description": "nmap -sS 형태: 1~1024 포트 SYN 스캔 (약 2초)",
+    "design_note": "",
+    "packets": 2189,
+    "pcap": "S02_syn_scan.pcap"
+  },
+  {
+    "name": "S03_stealth_scan",
+    "label": "attack",
+    "expected_rules": [
+      "STEALTH_SCAN_PACKET",
+      "PORT_SCAN_VERTICAL"
+    ],
+    "description": "NULL / FIN / XMAS 스캔 각 30포트",
+    "design_note": "",
+    "packets": 235,
+    "pcap": "S03_stealth_scan.pcap"
+  },
+  {
+    "name": "S04_udp_scan",
+    "label": "attack",
+    "expected_rules": [
+      "PORT_SCAN_VERTICAL"
+    ],
+    "description": "UDP 스캔 100포트",
+    "design_note": "",
+    "packets": 363,
+    "pcap": "S04_udp_scan.pcap"
+  },
+  {
+    "name": "S05_ssh_sweep",
+    "label": "attack",
+    "expected_rules": [
+      "PORT_SCAN_HORIZONTAL"
+    ],
+    "description": "수평 스캔: 192.168.10.100~139 의 22번 포트 sweep",
+    "design_note": "",
+    "packets": 188,
+    "pcap": "S05_ssh_sweep.pcap"
+  },
+  {
+    "name": "S06_slow_scan",
+    "label": "attack",
+    "expected_rules": [
+      "PORT_SCAN_VERTICAL"
+    ],
+    "description": "느린 스캔(nmap -T1 흉내): 3초에 1포트씩 60포트",
+    "design_note": "임계값(10초/20포트) 회피 → FN 예상",
+    "packets": 999,
+    "pcap": "S06_slow_scan.pcap"
+  },
+  {
+    "name": "S07_monitoring_healthcheck",
+    "label": "benign",
+    "expected_rules": [],
+    "description": "모니터링 서버가 5초 안에 서비스 포트 25개 헬스체크 (Nagios/Zabbix 형태)",
+    "design_note": "정상이지만 '다수 포트 접근' 모양 → FP 예상 (whitelist_src 로 해결 가능)",
+    "packets": 275,
+    "pcap": "S07_monitoring_healthcheck.pcap"
+  },
+  {
+    "name": "S08_arp_spoofing",
+    "label": "attack",
+    "expected_rules": [
+      "ARP_MAPPING_CHANGED",
+      "ARP_REINFECTION",
+      "ARP_REPLY_FLOOD"
+    ],
+    "description": "양방향 ARP Spoofing(infect 반복) + Relay + recover 후 재감염",
+    "design_note": "",
+    "packets": 433,
+    "pcap": "S08_arp_spoofing.pcap"
+  },
+  {
+    "name": "S09_arp_spoof_before_ids",
+    "label": "attack",
+    "expected_rules": [
+      "ARP_REPLY_FLOOD",
+      "ARP_MAPPING_CHANGED",
+      "ARP_REINFECTION"
+    ],
+    "description": "IDS 시작 전부터 감염 중 (첫 관측 매핑이 이미 위조)",
+    "design_note": "학습형만으로는 '이전 상태'가 없음 → 반복 Reply 규칙/정적 등록으로 보완",
+    "packets": 141,
+    "pcap": "S09_arp_spoof_before_ids.pcap"
+  },
+  {
+    "name": "S10_router_failover",
+    "label": "benign",
+    "expected_rules": [],
+    "description": "라우터 이중화(VRRP) 절체: 게이트웨이 IP 가 standby 라우터 MAC 으로 Gratuitous ARP",
+    "design_note": "기본 설정은 FP, allowed_macs 등록 시 TN 예상",
+    "packets": 308,
+    "pcap": "S10_router_failover.pcap"
+  },
+  {
+    "name": "S11_dhcp_reassign",
+    "label": "benign",
+    "expected_rules": [],
+    "description": "DHCP 재할당: .50 을 쓰던 노트북이 떠나고 새 장비가 같은 IP 사용",
+    "design_note": "정상 변경이지만 IP-MAC 변화 → FP 예상",
+    "packets": 312,
+    "pcap": "S11_dhcp_reassign.pcap"
+  },
+  {
+    "name": "S12_dns_tunnel",
+    "label": "attack",
+    "expected_rules": [
+      "DNS_TUNNEL_SUSPECT",
+      "DNS_SUBDOMAIN_BURST"
+    ],
+    "description": "DNS 터널링: 데이터를 base32 로 서브도메인에 실어 반복 질의",
+    "design_note": "",
+    "packets": 232,
+    "pcap": "S12_dns_tunnel.pcap"
+  },
+  {
+    "name": "S13_dns_blocklist",
+    "label": "attack",
+    "expected_rules": [
+      "DNS_BLOCKLIST"
+    ],
+    "description": "악성코드 C2 도메인 질의 (malware-c2.example)",
+    "design_note": "blocklist 가 설정돼야만 탐지 (기본 설정에선 FN)",
+    "packets": 151,
+    "pcap": "S13_dns_blocklist.pcap"
+  },
+  {
+    "name": "S14_icmp_flood",
+    "label": "attack",
+    "expected_rules": [
+      "ICMP_FLOOD"
+    ],
+    "description": "ICMP Flood: 2초 동안 Echo Request 200개",
+    "design_note": "",
+    "packets": 321,
+    "pcap": "S14_icmp_flood.pcap"
+  },
+  {
+    "name": "S15_ping_sweep",
+    "label": "attack",
+    "expected_rules": [
+      "ICMP_PING_SWEEP"
+    ],
+    "description": "Ping Sweep: 192.168.10.1~60 에 Echo Request",
+    "design_note": "",
+    "packets": 140,
+    "pcap": "S15_ping_sweep.pcap"
+  },
+  {
+    "name": "S16_icmp_tunnel",
+    "label": "attack",
+    "expected_rules": [
+      "ICMP_LARGE_PAYLOAD"
+    ],
+    "description": "ICMP 터널링: payload 1400바이트 Echo 요청으로 데이터 전송",
+    "design_note": "",
+    "packets": 115,
+    "pcap": "S16_icmp_tunnel.pcap"
+  },
+  {
+    "name": "S17_http_attacks",
+    "label": "attack",
+    "expected_rules": [
+      "HTTP_ATTACK_PATTERN",
+      "HTTP_SCANNER_UA"
+    ],
+    "description": "SQLi(URL 인코딩)/Path Traversal/XSS + sqlmap User-Agent",
+    "design_note": "",
+    "packets": 194,
+    "pcap": "S17_http_attacks.pcap"
+  },
+  {
+    "name": "S18_http_plain_login",
+    "label": "attack",
+    "expected_rules": [
+      "HTTP_PLAINTEXT_CREDENTIAL"
+    ],
+    "description": "평문 HTTP 로그인 (POST password=) + Basic 인증",
+    "design_note": "",
+    "packets": 185,
+    "pcap": "S18_http_plain_login.pcap"
+  },
+  {
+    "name": "S19_https_login",
+    "label": "attack",
+    "expected_rules": [
+      "HTTP_PLAINTEXT_CREDENTIAL"
+    ],
+    "description": "같은 로그인을 HTTPS(TLS)로 전송",
+    "design_note": "암호화되어 payload 검사 불가 → FN 예상 (의도된 한계)",
+    "packets": 156,
+    "pcap": "S19_https_login.pcap"
+  },
+  {
+    "name": "S20_http_split_segment",
+    "label": "attack",
+    "expected_rules": [
+      "HTTP_ATTACK_PATTERN"
+    ],
+    "description": "SQLi 문자열을 두 TCP 세그먼트로 쪼개 전송",
+    "design_note": "TCP 재조립이 없어 패턴이 잘림 → FN 예상",
+    "packets": 126,
+    "pcap": "S20_http_split_segment.pcap"
+  },
+  {
+    "name": "S21_ssh_bruteforce",
+    "label": "attack",
+    "expected_rules": [
+      "SSH_BRUTE_FORCE"
+    ],
+    "description": "SSH Brute Force: 1초 간격으로 40회 접속 시도 (hydra 형태)",
+    "design_note": "",
+    "packets": 570,
+    "pcap": "S21_ssh_bruteforce.pcap"
+  },
+  {
+    "name": "S22_ssh_normal",
+    "label": "benign",
+    "expected_rules": [],
+    "description": "관리자의 정상 SSH 접속 3회 (1분)",
+    "design_note": "",
+    "packets": 286,
+    "pcap": "S22_ssh_normal.pcap"
+  },
+  {
+    "name": "S23_ssh_hidden_port",
+    "label": "attack",
+    "expected_rules": [
+      "SSH_NONSTANDARD_PORT"
+    ],
+    "description": "비표준 포트(4444)에서 SSH 배너 → 백도어/터널 의심",
+    "design_note": "",
+    "packets": 79,
+    "pcap": "S23_ssh_hidden_port.pcap"
+  },
+  {
+    "name": "S24_busy_browsing",
+    "label": "benign",
+    "expected_rules": [],
+    "description": "뉴스 사이트 접속: 30초에 도메인 25개 + 같은 CDN 서브도메인 12개 질의",
+    "design_note": "",
+    "packets": 234,
+    "pcap": "S24_busy_browsing.pcap"
+  },
+  {
+    "name": "S25_av_reputation_dns",
+    "label": "benign",
+    "expected_rules": [],
+    "description": "백신의 DNS 기반 파일 평판 조회 (해시값이 서브도메인에 들어감)",
+    "design_note": "정상이지만 긴 무작위 label → FP 예상 (도메인 화이트리스트 필요)",
+    "packets": 166,
+    "pcap": "S25_av_reputation_dns.pcap"
+  }
+]

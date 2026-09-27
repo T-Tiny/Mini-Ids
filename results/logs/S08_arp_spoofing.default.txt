@@ -1,0 +1,11 @@
+$ python3 ids.py -r scenarios/S08_arp_spoofing.pcap
+[23:13:40] [ALERT] MEDIUM ARP_MAPPING_CHANGED        192.168.10.1 의 MAC 변경: 02:00:00:aa:aa:aa → 02:00:00:cc:cc:cc (이 MAC 의 원래 주인: 192.168.10.3)
+[23:13:40] [ALERT] MEDIUM ARP_MAPPING_CHANGED        192.168.10.2 의 MAC 변경: 02:00:00:bb:bb:bb → 02:00:00:cc:cc:cc (이 MAC 의 원래 주인: 192.168.10.3)
+[23:13:48] [ALERT] MEDIUM ARP_REPLY_FLOOD            요청 없는 ARP Reply 반복: '192.168.10.1 is-at 02:00:00:cc:cc:cc' 10초 동안 5회 → 192.168.10.2
+[23:13:48] [ALERT] MEDIUM ARP_REPLY_FLOOD            요청 없는 ARP Reply 반복: '192.168.10.2 is-at 02:00:00:cc:cc:cc' 10초 동안 5회 → 192.168.10.1
+[23:14:15] [ALERT] MEDIUM ARP_REINFECTION            192.168.10.1 매핑이 recover 후 다시 02:00:00:cc:cc:cc 로 변경 (2번째 감염) (이 MAC 의 원래 주인: 192.168.10.3)
+[23:14:15] [ALERT] MEDIUM ARP_REINFECTION            192.168.10.2 매핑이 recover 후 다시 02:00:00:cc:cc:cc 로 변경 (2번째 감염) (이 MAC 의 원래 주인: 192.168.10.3)
+[23:14:23] [ALERT] MEDIUM ARP_REPLY_FLOOD            요청 없는 ARP Reply 반복: '192.168.10.1 is-at 02:00:00:cc:cc:cc' 10초 동안 5회 → 192.168.10.2
+[23:14:23] [ALERT] MEDIUM ARP_REPLY_FLOOD            요청 없는 ARP Reply 반복: '192.168.10.2 is-at 02:00:00:cc:cc:cc' 10초 동안 5회 → 192.168.10.1
+
+[*] 패킷 433개 / 79.34초 분석, 경고 8건 {'ARP_MAPPING_CHANGED': 2, 'ARP_REPLY_FLOOD': 4, 'ARP_REINFECTION': 2}

@@ -1,0 +1,4 @@
+$ python3 ids.py -r scenarios/S15_ping_sweep.pcap -c config.json
+[23:13:25] [ALERT] MEDIUM ICMP_PING_SWEEP            192.168.10.3 Ping Sweep: 10초 동안 10개 호스트에 Echo Request
+
+[*] 패킷 140개 / 19.96초 분석, 경고 1건 {'ICMP_PING_SWEEP': 1}

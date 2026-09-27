@@ -1,0 +1,4 @@
+$ python3 ids.py -r scenarios/S10_router_failover.pcap
+[23:13:50] [ALERT] MEDIUM ARP_MAPPING_CHANGED        192.168.10.1 의 MAC 변경: 02:00:00:aa:aa:aa → 02:00:00:aa:aa:ab
+
+[*] 패킷 308개 / 59.83초 분석, 경고 1건 {'ARP_MAPPING_CHANGED': 1}

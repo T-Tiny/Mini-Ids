@@ -1,0 +1,7 @@
+$ python3 ids.py -r scenarios/S03_stealth_scan.pcap -c config.json
+[23:13:28] [ALERT] MEDIUM STEALTH_SCAN_PACKET        192.168.10.3 → 192.168.10.20:632 비정상 TCP 플래그(NULL scan)
+[23:13:28] [ALERT] MEDIUM PORT_SCAN_VERTICAL         192.168.10.3 → 192.168.10.20: 10초 안에 서로 다른 TCP 포트 20개 접근
+[23:13:29] [ALERT] MEDIUM STEALTH_SCAN_PACKET        192.168.10.3 → 192.168.10.20:456 비정상 TCP 플래그(FIN scan)
+[23:13:30] [ALERT] MEDIUM STEALTH_SCAN_PACKET        192.168.10.3 → 192.168.10.20:293 비정상 TCP 플래그(XMAS scan)
+
+[*] 패킷 235개 / 29.62초 분석, 경고 4건 {'STEALTH_SCAN_PACKET': 3, 'PORT_SCAN_VERTICAL': 1}

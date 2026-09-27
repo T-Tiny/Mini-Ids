@@ -1,0 +1,7 @@
+$ python3 ids.py -r scenarios/S09_arp_spoof_before_ids.pcap -c config.json
+[23:13:20] [ALERT] HIGH   ARP_MAPPING_CHANGED        게이트웨이/보호 IP 192.168.10.1 의 MAC 변경: 02:00:00:aa:aa:aa → 02:00:00:cc:cc:cc
+[23:13:22] [ALERT] HIGH   ARP_REINFECTION            192.168.10.1 매핑이 recover 후 다시 02:00:00:cc:cc:cc 로 변경 (2번째 감염)
+[23:13:36] [ALERT] HIGH   ARP_REPLY_FLOOD            요청 없는 ARP Reply 반복: '192.168.10.1 is-at 02:00:00:cc:cc:cc' 10초 동안 5회 → 192.168.10.2
+[23:13:40] [ALERT] HIGH   ARP_REINFECTION            192.168.10.1 매핑이 recover 후 다시 02:00:00:cc:cc:cc 로 변경 (3번째 감염)
+
+[*] 패킷 141개 / 30.94초 분석, 경고 4건 {'ARP_MAPPING_CHANGED': 1, 'ARP_REINFECTION': 2, 'ARP_REPLY_FLOOD': 1}

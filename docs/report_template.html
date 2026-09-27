@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>Mission Mini IDS 보고서</title>
+<style>
+  @page { size: A4; margin: 15mm 16mm 16mm 16mm; }
+  :root { --ink:#1b2430; --muted:#5b6675; --line:#d9dee5; --accent:#0e8f6e; --accent2:#1f6fb2;
+          --soft:#f3f6f8; --tp:#dff3e8; --tn:#eef2f4; --fp:#fdecc8; --fn:#f9d5d3; }
+  * { box-sizing: border-box; }
+  body { font-family: "Noto Sans CJK KR", "Noto Sans KR", sans-serif; color: var(--ink);
+         font-size: 9.6pt; line-height: 1.62; margin: 0; }
+  h1 { font-size: 21pt; margin: 0 0 2mm; letter-spacing: -0.3px; }
+  h2 { font-size: 13pt; margin: 7mm 0 2.5mm; padding-bottom: 1.2mm; border-bottom: 2px solid var(--accent);
+       color: var(--ink); break-after: avoid; }
+  h3 { font-size: 10.6pt; margin: 4.5mm 0 1.5mm; color: var(--accent2); break-after: avoid; }
+  p { margin: 1.2mm 0 2mm; }
+  .sub { color: var(--muted); font-size: 9.4pt; }
+  .meta { display:flex; gap: 6mm; color: var(--muted); font-size: 8.8pt; margin-top: 2mm;
+          padding-bottom: 3mm; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .meta b { color: var(--ink); font-weight: 600; }
+  table { border-collapse: collapse; width: 100%; margin: 2mm 0 3mm; font-size: 8.6pt; break-inside: auto; }
+  th, td { border: 1px solid var(--line); padding: 1.3mm 2mm; vertical-align: top; text-align: left; }
+  th { background: var(--soft); font-weight: 600; }
+  tr { break-inside: avoid; }
+  code, pre { font-family: "DejaVu Sans Mono", "Noto Sans Mono CJK KR", monospace; }
+  code { font-size: 8.4pt; background: var(--soft); padding: 0 1mm; border-radius: 2px; }
+  pre { font-size: 7.5pt; line-height: 1.45; background: #0f1720; color: #e4e9ef; padding: 2.6mm 3mm;
+        border-radius: 3px; white-space: pre-wrap; word-break: break-all; margin: 1.5mm 0 3mm; break-inside: avoid; }
+  pre .c { color: #7f8c9a; } pre .k { color: #f38ba8; } pre .s { color: #a6e3a1; }
+  pre.log { background: #f6f8fa; color: #1b2430; border: 1px solid var(--line); }
+  pre.log .H { color: #b42318; font-weight: 700; } pre.log .M { color: #b54708; font-weight: 700; }
+  pre.log .L { color: #1f6fb2; font-weight: 700; } pre.log .cmd { color: #5b6675; }
+  .pipe { display:flex; align-items:center; gap: 2mm; margin: 3mm 0 2mm; }
+  .pipe div.box { flex: 1; border: 1.5px solid var(--accent2); border-radius: 3px; padding: 1.8mm 1mm; text-align:center;
+                  font-size: 8.6pt; background: #f4f8fc; }
+  .pipe div.box b { display:block; font-size: 9.6pt; }
+  .pipe div.box.last { border-color: var(--accent); background: #effaf5; }
+  .pipe span { color: var(--muted); }
+  .callout { border-left: 3px solid var(--accent); background: #f1faf6; padding: 2mm 3mm; margin: 2mm 0 3mm; }
+  .warn { border-left-color: #d08700; background: #fff8e8; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 4mm; }
+  .kpi { display:grid; grid-template-columns: repeat(4, 1fr); gap: 2.5mm; margin: 2mm 0 3mm; }
+  .kpi div { border: 1px solid var(--line); border-radius: 3px; padding: 2mm; text-align:center; }
+  .kpi b { display:block; font-size: 15pt; line-height: 1.2; }
+  .kpi span { font-size: 8pt; color: var(--muted); }
+  td.TP { background: var(--tp); font-weight: 600; } td.TN { background: var(--tn); }
+  td.FP { background: var(--fp); font-weight: 600; } td.FN { background: var(--fn); font-weight: 600; }
+  td.c { text-align: center; }
+  .small { font-size: 8.2pt; color: var(--muted); }
+  .nobreak { break-inside: avoid; }
+  .pb { break-before: page; }
+  ul { margin: 1mm 0 2mm; padding-left: 5mm; } li { margin: 0.6mm 0; }
+</style>
+</head>
+<body>
+
+<h1>Mission Mini IDS 결과 보고서</h1>
+<div class="sub">Scapy 기반 경량 침입 탐지 시스템 — Port Scan · ARP Spoofing · 특정 패킷(DNS/ICMP/HTTP/SSH) 탐지</div>
+<div class="meta">
+  <span><b>과목</b> Network Security Study 3·4주차 최종 과제</span>
+  <span><b>작성자</b> {{AUTHOR}}</span>
+  <span><b>제출일</b> 2026. 09. 27.</span>
+  <span><b>소스 코드</b> {{REPO}}</span>
+</div>
+
+<h2>1. 개요</h2>
+<p>3·4주차 세미나의 핵심 질문인 <b>"무엇을 보면 공격을 알아차릴 수 있는가?"</b>를 코드로 옮기는 것이 목표였다. 1주차(Port Scan)와 2주차(Scapy로 패킷 필드 읽기)에서 배운 내용을 3·4주차의 <b>상태 저장 + 비교</b> 개념과 합쳐, 슬라이드 18의 <code>Capture → Parse → State → Detect → Alert</code> 구조를 그대로 가진 IDS를 만들었다.</p>
+<p>필수 조건은 3개 중 2개 이상이었지만 <b>세 항목을 모두 구현</b>했다. 탐지 규칙은 총 20개다. 25개의 테스트 시나리오(공격 18, 정상 7)로 FP/FN을 측정했고, 일부 시나리오는 <b>일부러 탐지가 실패하도록</b> 만들어 한계를 확인했다.</p>
+
+<table>
+  <tr><th style="width:18%">주차 계획</th><th>실제 진행 내용</th></tr>
+  <tr><td>1주차 · 탐지 대상 선정</td><td>세 항목 모두 선정. Port Scan은 1주차의 SYN/3-way handshake, ARP는 3·4주차의 IP-MAC 매핑, 특정 패킷은 2주차의 DNS/HTTP/ICMP 필드 분석과 연결</td></tr>
+  <tr><td>2주차 · 패킷 필드 추출</td><td><code>parse.py</code>: Scapy 패킷에서 필요한 필드만 뽑아 <code>PacketInfo</code>로 정리 (아래 표)</td></tr>
+  <tr><td>3주차 · 탐지 로직 구현</td><td>슬라이딩 윈도우(시간 창), ARP 신뢰 테이블, 시그니처 패턴, 경고 쿨다운 구현</td></tr>
+  <tr><td>4주차 · 테스트와 한계 분석</td><td>Packet Crafting으로 정답이 붙은 PCAP 25개 생성 → TP/FP/FN/TN 자동 집계, 실시간 캡처 테스트, 단위 테스트 21개</td></tr>
+</table>
+<p class="small">개발 환경: Python 3.11, Scapy(GitHub 최신 소스, 2.6 계열) · 실행: <code>python3 ids.py -r file.pcap</code> 또는 <code>sudo python3 ids.py -i eth0</code></p>
+
+<h2>2. 설계</h2>
+<div class="pipe">
+  <div class="box"><b>Capture</b>sniff() / PcapReader</div><span>→</span>
+  <div class="box"><b>Parse</b>parse.py<br>PacketInfo</div><span>→</span>
+  <div class="box"><b>State</b>SlidingWindow<br>ARP 신뢰 테이블</div><span>→</span>
+  <div class="box"><b>Detect</b>탐지기 6개<br>(20개 규칙)</div><span>→</span>
+  <div class="box last"><b>Alert</b>콘솔 + JSONL 로그<br>쿨다운</div>
+</div>
+<p>탐지기는 Scapy 객체를 직접 뒤지지 않고 <code>PacketInfo</code>만 본다. 이렇게 파싱과 탐지를 분리하면 새 규칙을 추가하기 쉽고, 단위 테스트도 간단해진다. 실시간 캡처든 PCAP 재생이든 같은 <code>MiniIDS.process()</code>를 거친다. 시간은 벽시계가 아니라 <b>패킷의 캡처 시각(pkt.time)</b>을 기준으로 한다. 그래서 PCAP을 빠르게 재생해도 "10초 안에"라는 조건이 원래 시간대로 계산된다.</p>
+
+<h3>탐지에 필요한 패킷 필드 (2주차 단계)</h3>
+<table>
+  <tr><th style="width:17%">탐지기</th><th style="width:43%">사용한 필드</th><th>이유</th></tr>
+  <tr><td>Port Scan</td><td><code>IP.src/dst</code>, <code>TCP.dport</code>, <code>TCP.flags</code>, <code>UDP.sport/dport</code></td><td>"누가 · 누구의 · 몇 개 포트"를 세고, 플래그로 연결 시작(SYN)과 스텔스 스캔을 구분</td></tr>
+  <tr><td>ARP Spoofing</td><td><code>ARP.op</code>, <code>psrc</code>(Sender IP), <code>hwsrc</code>(Sender MAC), <code>pdst</code>, <code>Ether.src</code></td><td>수신 호스트가 ARP Table에 반영하는 값이 Sender IP↔Sender MAC이므로 이것을 감시</td></tr>
+  <tr><td>DNS</td><td><code>DNSQR.qname</code>, <code>DNS.qr</code></td><td>질의 도메인 이름, 질의/응답 구분</td></tr>
+  <tr><td>ICMP</td><td><code>ICMP.type</code>, <code>Raw.load</code> 길이</td><td>Echo Request(8) 빈도, payload 크기</td></tr>
+  <tr><td>HTTP / SSH</td><td><code>Raw.load</code>, <code>TCP.dport</code>, <code>TCP.flags</code></td><td>평문 요청 내용, SSH 배너(<code>SSH-2.0-</code>), 22번 포트 SYN 횟수</td></tr>
+</table>
+
+<h2>3. 탐지 기준</h2>
+<p>슬라이드 16의 두 방식을 섞었다. <b>Anomaly</b>(평소와 다른 양·변화)는 "시간 창 안의 개수가 임계값 이상"으로, <b>Signature</b>(알려진 패턴)는 문자열·플래그 비교로 구현했다. 모든 임계값은 <code>config.py</code>의 기본값을 <code>config.json</code>으로 바꿀 수 있다.</p>
+
+<h3>3-1. Port Scan — "짧은 시간에 다수 포트 접근"</h3>
+<table>
+  <tr><th style="width:25%">규칙</th><th style="width:38%">기준</th><th>근거</th></tr>
+  <tr><td>PORT_SCAN_VERTICAL</td><td>10초 안에 한 출발지가 한 목적지의 <b>서로 다른 포트 20개 이상</b>에 접근</td><td>슬라이드 18의 예시 규칙. 정상 클라이언트는 한 서버의 몇 개 포트만 사용한다</td></tr>
+  <tr><td>PORT_SCAN_HORIZONTAL</td><td>10초 안에 같은 포트로 <b>서로 다른 호스트 15대 이상</b></td><td>22번 포트를 노리는 sweep은 수직 스캔 규칙으로는 안 잡힌다</td></tr>
+  <tr><td>STEALTH_SCAN_PACKET</td><td>TCP 플래그가 NULL / FIN 단독 / FIN+PSH+URG(XMAS)</td><td>정상 TCP에서는 나오지 않는 조합이라 패킷 하나로도 판단 가능 (Signature)</td></tr>
+</table>
+<p>포트 접근은 <b>SYN이면서 ACK가 없는 패킷</b>(연결 시작)만 센다. UDP는 <b>출발지 포트가 1024 이상인 요청</b>만 센다. DNS 서버(53)가 클라이언트의 무작위 포트로 보내는 응답을 "다수 포트 접근"으로 착각하지 않도록 넣은 조건이다. 의심 쌍에 대해 SYN/ACK 응답을 따로 모아서, 공격자가 알아낸 <b>열린 포트</b>도 요약에 보여 준다.</p>
+
+<h3>3-2. ARP Spoofing — "IP-MAC 매핑 변화 감지"</h3>
+<p>IDS가 스스로 <b>신뢰 ARP 테이블</b>(trusted)과 <b>현재 보이는 매핑</b>(current)을 들고 있다가 새 ARP 패킷의 Sender IP/MAC과 비교한다. 게이트웨이는 <code>config.json</code>에 정적으로 등록할 수 있다(Static ARP와 같은 발상). 등록하지 않은 IP는 처음 본 매핑을 학습한다.</p>
+<table>
+  <tr><th style="width:25%">규칙</th><th style="width:38%">기준</th><th>근거</th></tr>
+  <tr><td>ARP_MAPPING_CHANGED</td><td>알고 있는 IP가 다른 MAC으로 나타남. 보호 IP(게이트웨이)면 HIGH. <b>그 MAC의 원래 주인 IP</b>를 공격자 후보로 표시</td><td>슬라이드 12의 탐지 아이디어 1. 공격자도 평소에 자기 IP로 ARP를 하므로 MAC을 역추적할 수 있다</td></tr>
+  <tr><td>ARP_REINFECTION</td><td>정상 MAC으로 recover된 뒤 다시 위조 MAC으로 바뀜</td><td>슬라이드 13 "ARP Recover — 시간 흐름을 봐야 한다"</td></tr>
+  <tr><td>ARP_REPLY_FLOOD</td><td><b>Request 없이 온</b> 같은 Reply가 10초 안에 5회 이상</td><td>공격자는 감염을 유지하려고 infect 패킷을 반복한다(슬라이드 8). IDS를 켜기 전부터 감염돼 있어 "이전 상태"가 없을 때를 대비한 규칙</td></tr>
+  <tr><td>ARP_ETH_MISMATCH</td><td>Ethernet Src MAC ≠ ARP Sender MAC</td><td>정상 호스트는 두 값이 같다. 위조 도구의 흔적</td></tr>
+  <tr><td>ARP_DUPLICATE_MAC</td><td>이미 다른 IP의 주인인 MAC이 보호 IP를 처음 주장</td><td>학습 전에 게이트웨이를 사칭하는 경우</td></tr>
+</table>
+<p><b>오탐 완화:</b> 슬라이드 13에서 지적한 라우터 이중화는 <code>allowed_macs</code>에 대기 라우터 MAC을 등록해 해결한다. ARP Probe(<code>psrc=0.0.0.0</code>)는 매핑 정보가 없으므로 무시한다.</p>
+
+<h3>3-3. 특정 패킷 — "DNS/ICMP/HTTP/SSH 조건 탐지"</h3>
+<table>
+  <tr><th style="width:9%">대상</th><th style="width:25%">규칙</th><th>기준</th></tr>
+  <tr><td rowspan="4">DNS</td><td>DNS_BLOCKLIST</td><td>차단 목록 도메인과 그 하위 도메인 질의 (<code>a.evil.test</code>는 잡고 <code>notevil.test</code>는 통과)</td></tr>
+  <tr><td>DNS_TUNNEL_SUSPECT</td><td>질의 길이 60자 초과, 또는 label 40자 초과이면서 섀넌 엔트로피 ≥ 3.8 (무작위 문자열)</td></tr>
+  <tr><td>DNS_SUBDOMAIN_BURST</td><td>10초 안에 같은 상위 도메인의 서로 다른 서브도메인 15개 이상 (터널링/DGA)</td></tr>
+  <tr><td>DNS_QUERY_BURST</td><td>한 출발지가 10초 안에 DNS 질의 100회 이상 (LOW)</td></tr>
+  <tr><td rowspan="3">ICMP</td><td>ICMP_FLOOD</td><td>5초 안에 <b>한 목적지로</b> Echo Request 50개 이상 (출발지가 여럿인 분산 flood 포함)</td></tr>
+  <tr><td>ICMP_PING_SWEEP</td><td>10초 안에 서로 다른 호스트 10대 이상에 Echo Request</td></tr>
+  <tr><td>ICMP_LARGE_PAYLOAD</td><td>payload 1000바이트 초과 (일반 ping은 32~56바이트) → ICMP 터널링 의심</td></tr>
+  <tr><td rowspan="3">HTTP</td><td>HTTP_ATTACK_PATTERN</td><td><b>URL 디코딩 후</b> SQLi(<code>union select</code>) / Path Traversal(<code>../</code>) / XSS(<code>&lt;script</code>) / 명령어 삽입 문자열</td></tr>
+  <tr><td>HTTP_PLAINTEXT_CREDENTIAL</td><td>평문 요청에 <code>password=</code>, <code>Authorization: Basic</code> 등 포함 (2주차 HTTP vs HTTPS)</td></tr>
+  <tr><td>HTTP_SCANNER_UA</td><td>User-Agent에 sqlmap, nikto, nmap 등 공격 도구 이름</td></tr>
+  <tr><td rowspan="2">SSH</td><td>SSH_BRUTE_FORCE</td><td>60초 안에 같은 서버 22번으로 새 연결(SYN) 10회 이상</td></tr>
+  <tr><td>SSH_NONSTANDARD_PORT</td><td>22번이 아닌 포트에서 <code>SSH-</code> 배너 → 숨겨진 SSH 서버/터널 의심 (LOW)</td></tr>
+</table>
+<p>같은 공격자에 대한 경고가 쏟아지지 않도록 규칙마다 <b>쿨다운</b>(기본 30초)을 둔다. 경고는 화면 출력과 함께 <code>-l alerts.jsonl</code>로 JSON Lines 파일에 저장해 나중에 분석할 수 있다.</p>
+
+<h2>4. 핵심 코드</h2>
+<h3>① 시간 창(State) — 모든 Anomaly 규칙의 기반 <span class="small">mini_ids/detectors/base.py</span></h3>
+<pre><span class="k">class</span> SlidingWindow:
+    <span class="c">"""key 별로 (시각, 값)을 모아 두고 window 초보다 오래된 것은 버린다."""</span>
+    <span class="k">def</span> add(self, key, ts, value=None):
+        dq = self._data[key]
+        dq.append((ts, value))
+        <span class="k">while</span> dq <span class="k">and</span> ts - dq[0][0] &gt; self.window:   <span class="c"># 오래된 기록 제거</span>
+            dq.popleft()
+
+    <span class="k">def</span> distinct(self, key):                          <span class="c"># 창 안의 서로 다른 값 개수</span>
+        <span class="k">return</span> len({v <span class="k">for</span> _, v <span class="k">in</span> self._data.get(key, ())})</pre>
+
+<h3>② Port Scan — "누가 누구의 포트를 몇 개" <span class="small">mini_ids/detectors/portscan.py</span></h3>
+<pre>is_probe, stealth = self._is_probe(p)          <span class="c"># SYN(ACK 없음) / UDP 요청 / NULL·FIN·XMAS</span>
+<span class="k">if not</span> is_probe <span class="k">or</span> p.src_ip <span class="k">in</span> self.whitelist:
+    <span class="k">return</span>
+self.vertical.add((src, dst), ts, (p.proto, dport))
+n_ports = self.vertical.distinct((src, dst))
+<span class="k">if</span> n_ports &gt;= self.cfg[<span class="s">"port_threshold"</span>]:          <span class="c"># 10초 안에 20개 이상</span>
+    self.suspects.add((src, dst))
+    <span class="k">if</span> self.cool.ready((<span class="s">"v"</span>, src, dst), ts):
+        self.emit(Alert(ts, <span class="s">"PORTSCAN"</span>, <span class="s">"PORT_SCAN_VERTICAL"</span>, <span class="s">"MEDIUM"</span>, ...))</pre>
+
+<h3>③ ARP — "현재 패킷 + 이전 상태" 비교 <span class="small">mini_ids/detectors/arp_spoof.py</span></h3>
+<pre>known = self.trusted.get(ip)                    <span class="c"># IDS 가 믿고 있는 MAC</span>
+<span class="k">if</span> known <span class="k">is</span> None:                               <span class="c"># 처음 보는 IP → 학습</span>
+    self.trusted[ip] = mac; self.mac_owner[mac].add(ip); <span class="k">return</span>
+prev = self.current.get(ip, known)
+<span class="k">if</span> mac == known:                                <span class="c"># 정상 MAC</span>
+    <span class="k">if</span> prev != known: self.recoveries[ip] += 1   <span class="c"># ARP recover 발생</span>
+    self.current[ip] = mac; <span class="k">return</span>
+
+<span class="c"># mac != known : 매핑이 바뀌었다 → 그 MAC 의 원래 주인 = 공격자 후보</span>
+attacker_of = sorted(self.mac_owner.get(mac, set()) - {ip})
+<span class="k">if</span> prev != mac:                                 <span class="c"># 정상 → 위조로 넘어간 순간</span>
+    self.infections[ip] += 1
+    <span class="k">if</span> self.infections[ip] &gt;= 2 <span class="k">and</span> self.recoveries[ip] &gt;= 1:
+        self.emit(Alert(..., <span class="s">"ARP_REINFECTION"</span>, sev, ...)); <span class="k">return</span>
+self.emit(Alert(..., <span class="s">"ARP_MAPPING_CHANGED"</span>, sev,
+                f<span class="s">"{ip} 의 MAC 변경: {known} → {mac} (이 MAC 의 원래 주인: {attacker_of})"</span>))</pre>
+
+<h3>④ HTTP — 2주차 Raw payload 검사 + URL 디코딩 <span class="small">mini_ids/detectors/packet_rules.py</span></h3>
+<pre><span class="k">if not</span> p.payload.startswith((<span class="s">b"GET "</span>, <span class="s">b"POST "</span>, ...)):   <span class="c"># 평문 HTTP 요청만</span>
+    <span class="k">return</span>
+text = unquote_plus(p.payload.decode(errors=<span class="s">"ignore"</span>)).lower()   <span class="c"># %27UNION%20SELECT → 'union select</span>
+<span class="k">for</span> cat, pats <span class="k">in</span> self.cfg[<span class="s">"attack_patterns"</span>].items():
+    hit = next((pt <span class="k">for</span> pt <span class="k">in</span> pats <span class="k">if</span> pt <span class="k">in</span> text), None)
+    <span class="k">if</span> hit: self.emit(Alert(..., <span class="s">"HTTP_ATTACK_PATTERN"</span>, <span class="s">"HIGH"</span>, f<span class="s">"{cat} 패턴 '{hit}'"</span>))</pre>
+
+<h2>5. 실행 결과</h2>
+<p>테스트 트래픽은 2주차의 Packet Crafting(<code>Ether()/IP()/TCP()</code> + <code>wrpcap</code>)으로 만든 PCAP이다(<code>tools/gen_scenarios.py</code>). 주소는 슬라이드와 같은 <code>192.168.10.0/24</code>(게이트웨이 .1, 피해자 .2, 공격자 .3)를 쓰고, 외부 주소는 문서용 예약 대역을 썼다. 모든 공격 시나리오에는 정상 배경 트래픽(DNS, HTTPS, HTTP, ping, NTP)을 섞었다.</p>
+
+<h3>Port Scan — SYN 스캔 1024포트(S02), NULL/FIN/XMAS 스캔(S03)</h3>
+<pre class="log">{{LOG_S02}}
+{{LOG_S03}}</pre>
+<p class="small">요약(<code>--summary</code>)에는 공격자가 확인한 열린 포트도 나온다: <code>192.168.10.3 -&gt; 192.168.10.20: probed_ports 1024, open_ports [22, 80, 443]</code></p>
+
+<h3>ARP Spoofing — 양방향 감염 → recover → 재감염 (S08)</h3>
+<pre class="log">{{LOG_S08}}</pre>
+<p>첫 경고에서 <b>게이트웨이 IP가 공격자 MAC을 가리키게 된 순간</b>을 HIGH로 잡았다. <code>cc:cc:cc</code>의 원래 주인이 <code>192.168.10.3</code>이라는 것까지 밝혀 슬라이드 9의 상황을 그대로 재현했다. 정상 ARP로 풀린 뒤 다시 감염되자 <code>ARP_REINFECTION</code>이 울렸다.</p>
+
+<h3>특정 패킷 — DNS 터널링(S12), HTTP 공격(S17), 평문 로그인(S18), SSH Brute Force(S21)</h3>
+<pre class="log">{{LOG_S12}}
+{{LOG_S17}}
+{{LOG_S18}}
+{{LOG_S21}}</pre>
+
+<h3>실시간 캡처 테스트 (<code>-i lo</code>)</h3>
+<p>PCAP뿐 아니라 실제 캡처에서도 동작하는지 확인했다. IDS를 루프백에 붙여 두고 <code>tools/live_demo_scan.py</code>로 127.0.0.1에 실제 TCP connect 스캔(1~300번 포트)과 평문 password 요청, SQLi 요청을 보냈다.</p>
+<pre class="log">{{LOG_LIVE}}</pre>
+<p class="small">테스트 환경에 libpcap이 없어 BPF 필터를 컴파일하지 못했다. 이 경우 필터 없이 자동으로 다시 캡처하도록 수정했다(Windows에 Npcap이 없을 때도 같은 문제가 생긴다).</p>
+
+<h2>6. 테스트와 FP / FN 분석</h2>
+<p>시나리오마다 정답을 붙였다. 공격 시나리오는 <b>예상 규칙 중 하나라도 울리면 TP, 아니면 FN</b>이다. 정상 시나리오는 <b>경고가 하나라도 나오면 FP, 아니면 TN</b>이다. 두 설정으로 같은 PCAP을 돌렸다(<code>tools/evaluate.py</code>).</p>
+<ul>
+  <li><b>default</b>: 설정 파일 없음. 모든 매핑을 학습하고, 차단 도메인과 화이트리스트도 없음</li>
+  <li><b>tuned</b>: <code>config.json</code>. 게이트웨이 MAC 정적 등록, 대기 라우터 MAC 허용, 차단 도메인, 모니터링 서버 화이트리스트, 백신 평판 조회 도메인 예외</li>
+</ul>
+
+<div class="kpi">
+  <div><b>{{T_TP}}</b><span>TP (tuned)</span></div>
+  <div><b>{{T_FN}}</b><span>FN (tuned)</span></div>
+  <div><b>{{T_FP}}</b><span>FP (tuned)</span></div>
+  <div><b>{{T_TN}}</b><span>TN (tuned)</span></div>
+</div>
+<table>
+  <tr><th>설정</th><th class="c">TP</th><th class="c">FN</th><th class="c">FP</th><th class="c">TN</th><th class="c">탐지율 TP/(TP+FN)</th><th class="c">오탐률 FP/(FP+TN)</th><th class="c">정밀도 TP/(TP+FP)</th></tr>
+  {{TOTALS_ROWS}}
+</table>
+
+{{SCENARIO_TABLE}}
+
+<h3>FN — 탐지하지 못한 공격과 원인</h3>
+<table>
+  <tr><th style="width:22%">시나리오</th><th>원인</th></tr>
+  <tr><td>S06 느린 스캔<br><span class="small">3초에 1포트, 60포트</span></td><td>10초 창 안에는 포트가 최대 4개만 들어와 임계값 20을 넘지 못한다. 슬라이드 17의 FN 예시("아주 천천히 포트 스캔해서 임계값 회피") 그대로다. 창을 넓히면 잡히지만 그만큼 정상 트래픽이 창 안에 쌓여 FP가 늘어난다.</td></tr>
+  <tr><td>S13 차단 도메인 (default)</td><td>차단 목록이 비어 있으면 Signature 규칙은 아무것도 모른다. <code>config.json</code>에 도메인을 넣은 tuned 설정에서는 TP. 시그니처 방식은 <b>목록의 품질이 곧 탐지 능력</b>이다.</td></tr>
+  <tr><td>S19 HTTPS 로그인</td><td>같은 로그인이라도 TLS로 암호화되면 <code>password=</code>를 볼 수 없다. 2주차에서 배운 대로 IP·포트·크기 같은 메타데이터만 보인다. 사용자 입장에서는 이것이 오히려 올바른 보안 상태다.</td></tr>
+  <tr><td>S20 세그먼트 분할 SQLi</td><td><code>UNI</code> / <code>ON SEL</code> / <code>ECT</code>처럼 공격 문자열을 여러 TCP 세그먼트로 나누면 패킷 하나씩 검사하는 방식으로는 패턴이 완성되지 않는다. 2주차 슬라이드의 "학습용 코드의 한계(TCP 재조립 없음)"를 실제로 확인한 사례다.</td></tr>
+</table>
+
+<h3>FP — 정상인데 경고한 경우와 원인</h3>
+<table>
+  <tr><th style="width:22%">시나리오</th><th>원인과 조치</th></tr>
+  <tr><td>S07 모니터링 헬스체크 (default)</td><td>모니터링 서버가 5초 안에 서비스 포트 25개를 확인하는 동작은 모양만 보면 포트 스캔과 똑같다. <code>whitelist_src</code>에 등록해 tuned에서 TN이 됐다. 단, 화이트리스트에 넣은 호스트가 탈취되면 그 호스트의 스캔은 보이지 않는다.</td></tr>
+  <tr><td>S10 라우터 이중화 (default)</td><td>VRRP 절체로 게이트웨이 IP의 MAC이 대기 라우터 MAC으로 바뀐 것을 공격으로 오인했다. 슬라이드 13/17의 FP 예시다. <code>allowed_macs</code> 등록으로 tuned에서 TN.</td></tr>
+  <tr><td>S11 DHCP 재할당 <b>(두 설정 모두)</b></td><td>.50을 쓰던 노트북이 나가고 새 장비가 같은 IP를 받으면 정상적으로 IP-MAC이 바뀐다. 패킷만 봐서는 공격과 구별할 근거가 없다. <b>남은 유일한 FP</b>이고, DHCP 서버의 임대 기록과 연동해야 해결된다(개선점 참고).</td></tr>
+  <tr><td>S25 백신 평판 조회 (default)</td><td>일부 백신은 파일 해시를 서브도메인에 넣어 DNS로 조회한다. 길고 무작위인 label이라 터널링과 모양이 같다. <code>allow_domains</code> 예외로 tuned에서 TN.</td></tr>
+</table>
+
+<div class="callout warn">
+<b>튜닝 과정에서 발견한 것</b>
+<ul>
+  <li><b>DNS 질의 폭증 임계값</b>: 처음에는 10초에 40회로 정했다. 그런데 정상 뉴스 사이트 접속(S24, 도메인 37개 + 배경 트래픽)에서 FP가 나서 100회로 올렸다. 같은 데이터로 튜닝했으므로 새 환경에서는 다시 검증해야 한다.</li>
+  <li><b>ICMP Flood 집계 기준</b>: 처음에는 출발지별로 셌다. 그런데 Ping Sweep(S15)에서 Flood 경고까지 같이 울렸다. Flood는 "피해자가 받는 부하"이므로 <b>목적지 기준</b>으로 바꿨다. 덕분에 출발지가 여럿인 분산 flood도 잡힌다(단위 테스트로 확인).</li>
+  <li><b>감염 중에 IDS를 켠 경우(S09)</b>: 학습형 IDS는 처음 본 매핑을 믿는다. 그래서 위조 MAC을 "정상"으로 배웠다가, 진짜 게이트웨이 응답이 오자 <b>방향이 거꾸로 된 경고</b>를 냈다. 요청 없는 Reply가 반복되면(ARP_REPLY_FLOOD) 학습한 매핑의 신뢰를 철회하도록 고쳤다. 그 뒤로는 올바른 방향(aa → cc)으로 재감염을 잡는다. 다만 첫 경고의 방향 오류는 남는다. 게이트웨이를 정적으로 등록하는 것(tuned)이 근본적인 해결책이다.</li>
+  <li><b>실시간 캡처 누락</b>: 루프백에서 300포트를 딜레이 없이 스캔하면(약 0.03초) IDS가 50포트(약 17%)만 봤다. 포트 사이에 2ms만 쉬어도 301포트를 모두 봤다. Python/Scapy의 패킷당 처리 속도가 한계라서, 고속 스캔(masscan 등)이나 트래픽이 많은 링크에서는 <b>캡처 단계에서 FN이 생길 수 있다</b>. 그래도 이번 테스트에서는 누락된 상태로도 임계값(20)을 넘어 탐지에는 성공했다.</li>
+</ul>
+</div>
+
+<h2>7. 한계와 개선점</h2>
+<table>
+  <tr><th style="width:26%">한계</th><th>개선 방향</th></tr>
+  <tr><td>느린 스캔 회피 (S06)</td><td>짧은 창(10초/20포트)과 긴 창(10분/50포트)을 함께 쓰는 다중 시간 창. 또는 출발지별로 "처음 접근한 포트" 누적 점수를 천천히 감소시키는 방식</td></tr>
+  <tr><td>TCP 재조립 없음 (S20)</td><td>(src, sport, dst, dport) 흐름별로 seq 순서대로 payload를 이어 붙인 뒤 검사. 또는 Scapy의 <code>TCPSession</code> 사용</td></tr>
+  <tr><td>암호화 트래픽 (S19)</td><td>payload 대신 메타데이터 활용: TLS SNI로 차단 도메인 검사, 비정상적으로 긴 세션·전송량, JA3 같은 TLS 지문</td></tr>
+  <tr><td>정상적인 IP-MAC 변경 (S11)</td><td>DHCP 패킷(ACK)을 함께 관찰해 "방금 임대된 IP의 새 MAC"은 정상 처리 (Switch의 DHCP Snooping + DAI와 같은 발상)</td></tr>
+  <tr><td>스위치 환경의 가시성</td><td>호스트 한 대에서 돌리면 브로드캐스트 ARP Request는 보이지만 다른 호스트로 가는 유니캐스트 Reply는 보이지 않는다. 미러링 포트(SPAN)에 IDS를 두거나, 각 호스트에서 자기 ARP 테이블(<code>arp -a</code>)을 주기적으로 비교하는 에이전트를 추가</td></tr>
+  <tr><td>Python 캡처 성능</td><td>BPF로 필요한 패킷만 받기, 파싱 최소화, 고속 환경에서는 Suricata/Zeek 같은 엔진에 규칙을 옮기기</td></tr>
+  <tr><td>고정 임계값</td><td>평소 트래픽을 일정 기간 학습해 호스트별 기준선(평균 + 표준편차)을 만드는 적응형 임계값</td></tr>
+  <tr><td>탐지만 가능 (IDS)</td><td>ARP 위조를 탐지하면 정상 Reply를 보내 피해자를 recover시키거나, 스캐너 IP를 방화벽에 등록하는 대응(IPS 방향)</td></tr>
+</table>
+
+<div class="callout">
+<b>정리</b> — 탐지 규칙을 만드는 일보다 <b>"언제 틀리는가"</b>를 확인하는 일이 더 많은 것을 알려 줬다. 기본 설정의 오탐률 57%가 환경 정보(게이트웨이 MAC, 이중화 라우터, 모니터링 서버)를 넣자 14%로 줄었다. 결국 슬라이드의 마지막 문장처럼, 탐지는 <b>"정상 상태를 알고 달라진 지점을 찾는 것"</b>이고, 정상 상태를 얼마나 정확히 알려 주느냐가 IDS의 품질을 결정했다.
+</div>
+
+<h2>부록. 재현 방법</h2>
+<pre>pip install scapy
+python3 tools/gen_scenarios.py                 <span class="c"># 테스트 PCAP 25개 + 정답(manifest.json) 생성</span>
+python3 tools/evaluate.py                      <span class="c"># TP/FP/FN/TN 집계 → results/</span>
+python3 -m unittest discover -s tests -v       <span class="c"># 단위 테스트 21개</span>
+python3 ids.py -r scenarios/S08_arp_spoofing.pcap -c config.json --summary
+sudo python3 ids.py -i eth0 -c config.json -l alerts.jsonl   <span class="c"># 실시간</span></pre>
+<p class="small">모든 테스트 트래픽은 PCAP 안의 가상 패킷이거나 127.0.0.1로만 보낸 것이다. 스캔·스푸핑은 본인 소유이거나 허가받은 실습망에서만 수행해야 한다.</p>
+
+</body>
+</html>

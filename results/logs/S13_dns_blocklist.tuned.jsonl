@@ -1,0 +1,1 @@
+{"ts": 1790000010.0, "detector": "DNS", "rule": "DNS_BLOCKLIST", "severity": "HIGH", "message": "192.168.10.2 가 차단 도메인 질의: beacon.malware-c2.example", "src": "192.168.10.2", "dst": "198.51.100.53", "details": {"qname": "beacon.malware-c2.example", "matched": "malware-c2.example"}}

@@ -1,0 +1,4 @@
+$ python3 ids.py -r scenarios/S21_ssh_bruteforce.pcap -c config.json
+[23:13:39] [ALERT] HIGH   SSH_BRUTE_FORCE            192.168.10.3 → 192.168.10.20:22 60초 동안 SSH 연결 시도 10회
+
+[*] 패킷 570개 / 59.12초 분석, 경고 1건 {'SSH_BRUTE_FORCE': 1}

@@ -1,0 +1,4 @@
+$ python3 ids.py -r scenarios/S05_ssh_sweep.pcap
+[23:13:25] [ALERT] MEDIUM PORT_SCAN_HORIZONTAL       192.168.10.3: 10초 안에 15개 호스트의 TCP/22 포트 접근 (sweep)
+
+[*] 패킷 188개 / 29.61초 분석, 경고 1건 {'PORT_SCAN_HORIZONTAL': 1}

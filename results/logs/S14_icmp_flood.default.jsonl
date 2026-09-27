@@ -1,0 +1,1 @@
+{"ts": 1790000008.49, "detector": "ICMP", "rule": "ICMP_FLOOD", "severity": "HIGH", "message": "192.168.10.20 로 Echo Request 폭증: 5초 동안 50개 (출발지 1개: 192.168.10.3)", "src": "192.168.10.3", "dst": "192.168.10.20", "details": {"count": 50, "sources": ["192.168.10.3"]}}

@@ -1,0 +1,4 @@
+$ python3 ids.py -r scenarios/S11_dhcp_reassign.pcap
+[23:14:01] [ALERT] MEDIUM ARP_MAPPING_CHANGED        192.168.10.50 의 MAC 변경: 02:00:00:50:50:01 → 02:00:00:50:50:02
+
+[*] 패킷 312개 / 59.53초 분석, 경고 1건 {'ARP_MAPPING_CHANGED': 1}

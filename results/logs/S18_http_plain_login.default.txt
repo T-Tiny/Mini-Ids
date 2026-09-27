@@ -1,0 +1,5 @@
+$ python3 ids.py -r scenarios/S18_http_plain_login.pcap
+[23:13:30] [ALERT] MEDIUM HTTP_PLAINTEXT_CREDENTIAL  192.168.10.2 → 192.168.10.20:80 평문 HTTP 로 인증 정보 전송 ('password=' 포함)
+[23:13:35] [ALERT] MEDIUM HTTP_PLAINTEXT_CREDENTIAL  192.168.10.2 → 192.168.10.20:80 평문 HTTP 로 인증 정보 전송 ('authorization: basic' 포함)
+
+[*] 패킷 185개 / 29.88초 분석, 경고 2건 {'HTTP_PLAINTEXT_CREDENTIAL': 2}

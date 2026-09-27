@@ -1,0 +1,4 @@
+$ python3 ids.py -r scenarios/S13_dns_blocklist.pcap -c config.json
+[23:13:30] [ALERT] HIGH   DNS_BLOCKLIST              192.168.10.2 가 차단 도메인 질의: beacon.malware-c2.example
+
+[*] 패킷 151개 / 29.88초 분석, 경고 1건 {'DNS_BLOCKLIST': 1}

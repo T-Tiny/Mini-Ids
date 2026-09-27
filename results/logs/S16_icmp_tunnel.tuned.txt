@@ -1,0 +1,5 @@
+$ python3 ids.py -r scenarios/S16_icmp_tunnel.pcap -c config.json
+[23:13:25] [ALERT] MEDIUM ICMP_LARGE_PAYLOAD         192.168.10.2 → 203.0.113.66 ICMP type 8 payload 1400바이트 (터널링/비정상 패킷 의심)
+[23:13:25] [ALERT] MEDIUM ICMP_LARGE_PAYLOAD         203.0.113.66 → 192.168.10.2 ICMP type 0 payload 1400바이트 (터널링/비정상 패킷 의심)
+
+[*] 패킷 115개 / 19.72초 분석, 경고 2건 {'ICMP_LARGE_PAYLOAD': 2}

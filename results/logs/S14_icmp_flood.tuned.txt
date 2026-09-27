@@ -1,0 +1,4 @@
+$ python3 ids.py -r scenarios/S14_icmp_flood.pcap -c config.json
+[23:13:28] [ALERT] HIGH   ICMP_FLOOD                 192.168.10.20 로 Echo Request 폭증: 5초 동안 50개 (출발지 1개: 192.168.10.3)
+
+[*] 패킷 321개 / 19.81초 분석, 경고 1건 {'ICMP_FLOOD': 1}

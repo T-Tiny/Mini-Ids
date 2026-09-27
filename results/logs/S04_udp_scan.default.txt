@@ -1,0 +1,4 @@
+$ python3 ids.py -r scenarios/S04_udp_scan.pcap
+[23:13:32] [ALERT] MEDIUM PORT_SCAN_VERTICAL         192.168.10.3 → 192.168.10.20: 10초 안에 서로 다른 UDP 포트 20개 접근
+
+[*] 패킷 363개 / 29.82초 분석, 경고 1건 {'PORT_SCAN_VERTICAL': 1}

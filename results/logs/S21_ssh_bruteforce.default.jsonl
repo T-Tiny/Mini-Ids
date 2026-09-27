@@ -1,0 +1,1 @@
+{"ts": 1790000019.0, "detector": "SSH", "rule": "SSH_BRUTE_FORCE", "severity": "HIGH", "message": "192.168.10.3 → 192.168.10.20:22 60초 동안 SSH 연결 시도 10회", "src": "192.168.10.3", "dst": "192.168.10.20", "details": {"attempts": 10}}

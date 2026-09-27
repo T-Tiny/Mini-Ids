@@ -1,0 +1,3 @@
+$ python3 ids.py -r scenarios/S01_normal_office.pcap -c config.json
+
+[*] 패킷 704개 / 89.2초 분석, 경고 0건 {}

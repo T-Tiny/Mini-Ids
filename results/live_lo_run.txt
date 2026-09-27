@@ -1,0 +1,23 @@
+[*] lo 에서 캡처 시작 (filter='arp or tcp or udp or icmp') - Ctrl+C 로 종료
+[!] BPF 필터 사용 불가(Cannot set filter: libpcap is not available. Cannot compile filter !) → 필터 없이 캡처합니다
+[19:34:35] [ALERT] MEDIUM PORT_SCAN_VERTICAL         127.0.0.1 → 127.0.0.1: 10초 안에 서로 다른 TCP 포트 20개 접근
+[19:34:35] [ALERT] MEDIUM HTTP_PLAINTEXT_CREDENTIAL  127.0.0.1 → 127.0.0.1:8080 평문 HTTP 로 인증 정보 전송 ('password=' 포함)
+[19:34:35] [ALERT] HIGH   HTTP_ATTACK_PATTERN        127.0.0.1 → 127.0.0.1:8080 SQL_INJECTION 패턴 'union select' : GET /item?id=1%27%20UNION%20SELECT%20password%20FROM%20users-- HTTP/1.1
+
+[*] 패킷 210개 / 0.03초 분석, 경고 3건 {'PORT_SCAN_VERTICAL': 1, 'HTTP_PLAINTEXT_CREDENTIAL': 1, 'HTTP_ATTACK_PATTERN': 1}
+{
+  "PORTSCAN": {
+    "127.0.0.1 -> 127.0.0.1": {
+      "probed_ports": 50,
+      "open_ports": [
+        8080
+      ]
+    }
+  },
+  "ARP": {
+    "learned_mappings": 0,
+    "currently_poisoned": {},
+    "infections": {},
+    "recoveries": {}
+  }
+}

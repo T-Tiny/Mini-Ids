@@ -1,0 +1,20 @@
+[*] lo 에서 캡처 시작 (filter='arp or tcp or udp or icmp') - Ctrl+C 로 종료
+[!] BPF 필터 사용 불가(Cannot set filter: libpcap is not available. Cannot compile filter !) → 필터 없이 캡처합니다
+
+[*] 패킷 1256개 / 0.66초 분석, 경고 3건 {'PORT_SCAN_VERTICAL': 1, 'HTTP_PLAINTEXT_CREDENTIAL': 1, 'HTTP_ATTACK_PATTERN': 1}
+{
+  "PORTSCAN": {
+    "127.0.0.1 -> 127.0.0.1": {
+      "probed_ports": 301,
+      "open_ports": [
+        8080
+      ]
+    }
+  },
+  "ARP": {
+    "learned_mappings": 0,
+    "currently_poisoned": {},
+    "infections": {},
+    "recoveries": {}
+  }
+}

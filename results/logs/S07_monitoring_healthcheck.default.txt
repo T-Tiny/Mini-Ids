@@ -1,0 +1,4 @@
+$ python3 ids.py -r scenarios/S07_monitoring_healthcheck.pcap
+[23:13:33] [ALERT] MEDIUM PORT_SCAN_VERTICAL         192.168.10.30 → 192.168.10.20: 10초 안에 서로 다른 TCP 포트 20개 접근
+
+[*] 패킷 275개 / 29.61초 분석, 경고 1건 {'PORT_SCAN_VERTICAL': 1}

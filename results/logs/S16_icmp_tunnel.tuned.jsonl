@@ -1,0 +1,2 @@
+{"ts": 1790000005.0, "detector": "ICMP", "rule": "ICMP_LARGE_PAYLOAD", "severity": "MEDIUM", "message": "192.168.10.2 → 203.0.113.66 ICMP type 8 payload 1400바이트 (터널링/비정상 패킷 의심)", "src": "192.168.10.2", "dst": "203.0.113.66", "details": {"payload_len": 1400, "icmp_type": 8}}
+{"ts": 1790000005.005, "detector": "ICMP", "rule": "ICMP_LARGE_PAYLOAD", "severity": "MEDIUM", "message": "203.0.113.66 → 192.168.10.2 ICMP type 0 payload 1400바이트 (터널링/비정상 패킷 의심)", "src": "203.0.113.66", "dst": "192.168.10.2", "details": {"payload_len": 1400, "icmp_type": 0}}

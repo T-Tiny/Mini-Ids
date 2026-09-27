@@ -1,0 +1,18 @@
+{
+  "arp": {
+    "trusted": {
+      "192.168.10.1": "02:00:00:aa:aa:aa"
+    },
+    "protected_ips": ["192.168.10.1"],
+    "allowed_macs": {
+      "192.168.10.1": ["00:00:5e:00:01:01", "02:00:00:aa:aa:ab"]
+    }
+  },
+  "dns": {
+    "blocklist": ["malware-c2.example", "phishing-login.test", "evil.test"],
+    "allow_domains": ["avts.av-vendor.example"]
+  },
+  "portscan": {
+    "whitelist_src": ["192.168.10.30"]
+  }
+}

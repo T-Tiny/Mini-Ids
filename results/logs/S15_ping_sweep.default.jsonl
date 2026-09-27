@@ -1,0 +1,1 @@
+{"ts": 1790000005.3, "detector": "ICMP", "rule": "ICMP_PING_SWEEP", "severity": "MEDIUM", "message": "192.168.10.3 Ping Sweep: 10초 동안 10개 호스트에 Echo Request", "src": "192.168.10.3", "dst": null, "details": {"distinct_hosts": 10}}

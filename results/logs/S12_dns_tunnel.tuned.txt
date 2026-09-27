@@ -1,0 +1,5 @@
+$ python3 ids.py -r scenarios/S12_dns_tunnel.pcap -c config.json
+[23:13:30] [ALERT] MEDIUM DNS_TUNNEL_SUSPECT         192.168.10.2 비정상적으로 긴/무작위 DNS 질의 (길이 70, 엔트로피 4.49): 52t2ikx753iteflzck3iw3olvjmayurahvkuvmdadf4fhuwi.0.t.tunnel-exfil.test…
+[23:13:34] [ALERT] MEDIUM DNS_SUBDOMAIN_BURST        192.168.10.2 가 10초 동안 tunnel-exfil.test 의 서로 다른 서브도메인 15개 질의 (DNS 터널링/DGA 의심)
+
+[*] 패킷 232개 / 39.64초 분석, 경고 2건 {'DNS_TUNNEL_SUSPECT': 1, 'DNS_SUBDOMAIN_BURST': 1}
